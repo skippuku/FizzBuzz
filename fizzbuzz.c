@@ -1,31 +1,42 @@
-
 #include <stdio.h>
 #include <assert.h>
+#include <stdbool.h>
 
-#define sarrlen(x) (sizeof(x)/sizeof(*x))
+#define LENGTH(x) (sizeof(x)/sizeof(*(x)))
+
+typedef struct {
+    int denominator;
+    const char * name;
+} FizzBuzzDivisor;
 
 void
-fizzbuzz(int count_min, int count_max_inclusive, int num_divs, const char * strings [], int divs []) {
-	for (int n=count_min; n <= count_max_inclusive; n++) {
-		int should_print_number = 1;
-		for (int i=0; i < num_divs; i++) {
-			if (n % divs[i] == 0) {
-				printf("%s", strings[i]);
-				should_print_number = 0;
+do_fizzbuzz(int range_start, int range_end, FizzBuzzDivisor * divs, int count_divs) {
+	for (int n = range_start; n <= range_end; n++) {
+		bool matched_divisor = false;
+
+		for (int i=0; i < count_divs; i++) {
+			if (n % divs[i].denominator == 0) {
+				printf("%s", divs[i].name);
+				matched_divisor = true;
 			}
 		}
-		if (should_print_number) {
+
+		if (!matched_divisor) {
 			printf("%i", n);
 		}
+
 		printf("\n");
 	}
 }
 
 int
 main() {
-	int divs [] = {3,5};
-	const char * strings [] = {"Fizz", "Buzz"};
-	assert(sarrlen(divs) == sarrlen(strings));
-	fizzbuzz(1, 100, sarrlen(divs), strings, divs);
-}
+	FizzBuzzDivisor divs [] = {
+        {3, "Fizz"},
+        {5, "Buzz"},
+    };
 
+	do_fizzbuzz(1, 100, divs, LENGTH(divs));
+
+    return 0;
+}
